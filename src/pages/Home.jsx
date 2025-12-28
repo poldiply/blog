@@ -7,7 +7,7 @@ export default function Home() {
         <div className="max-w-2xl">
           <h1 className="text-5xl font-bold">Dev.CS Developer Tools 🛠️</h1>
           <p className="py-6 text-lg text-base-content/70">
-            개발하면서 필요했던 모든 도구들을 한곳에 모았습니다.<br/>
+            개발에 필요한 모든 도구들을 한 곳에 모으고 있습니다.<br/>
             이미지 처리, 암호화, 포맷팅까지 브라우저에서 안전하게 처리하세요.
           </p>
           
