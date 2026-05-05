@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# WASM Build tools and libs
+wasm-build/emsdk/
+wasm-build/liboqs/
+wasm-build/obj/
+wasm-build/build_error.txt
