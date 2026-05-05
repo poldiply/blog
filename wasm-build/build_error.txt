@@ -1,0 +1,11 @@
+Setting up EMSDK environment (suppress these messages with EMSDK_QUIET=1)
+Adding directories to PATH:
+PATH += /Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/emsdk
+PATH += /Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/emsdk/upstream/emscripten
+
+Setting environment variables:
+PATH = /Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/emsdk:/Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/emsdk/upstream/emscripten:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pkg/env/active/bin:/opt/pmk/env/global/bin:/Library/Apple/usr/bin
+EMSDK = /Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/emsdk
+EMSDK_NODE = /Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/emsdk/node/22.16.0_64bit/bin/node
+EMSDK_PYTHON = /Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/emsdk/python/3.13.3_64bit/bin/python3
+SSL_CERT_FILE = /Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/emsdk/python/3.13.3_64bit/lib/python3.13/site-packages/certifi/cacert.pem

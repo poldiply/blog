@@ -1,3 +1,671 @@
+/* ── Pretendard Font ─────────────────────────────────────────────────────── */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Base reset & typography ─────────────────────────────────────────────── */
+@layer base {
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.01em;
+  }
+
+  body {
+    @apply bg-base-100 text-base-content;
+    font-size: 15px;
+    /* ↑ 14→15px */
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.875em;
+  }
+
+  ::selection {
+    background: hsl(215 90% 92%);
+    color: hsl(215 80% 25%);
+  }
+
+  [data-theme="dark"] ::selection {
+    background: hsl(25 90% 30%);
+    color: hsl(25 90% 90%);
+  }
+
+  .btn {
+    animation: none !important;
+  }
+}
+
+/* ── Design tokens (CSS vars) ────────────────────────────────────────────── */
+:root {
+  /* Point color — soft blue */
+  --cs-accent: oklch(0.57 0.17 248);
+  /* blue-500 */
+  --cs-accent-soft: oklch(0.57 0.17 248 / 0.12);
+  --cs-accent-border: oklch(0.57 0.17 248 / 0.35);
+  --cs-accent-text: oklch(0.42 0.18 248);
+  /* slightly darker for text */
+  --cs-border: oklch(var(--bc) / 0.14);
+  --cs-border-hover: oklch(var(--bc) / 0.25);
+  --cs-input-border: oklch(var(--bc) / 0.22);
+  /* input/textarea default border */
+}
+
+[data-theme="dark"] {
+  /* Point color — calm orange */
+  --cs-accent: oklch(0.72 0.16 55);
+  /* amber-400 */
+  --cs-accent-soft: oklch(0.72 0.16 55 / 0.14);
+  --cs-accent-border: oklch(0.72 0.16 55 / 0.4);
+  --cs-accent-text: oklch(0.82 0.14 55);
+  --cs-border: oklch(var(--bc) / 0.13);
+  --cs-border-hover: oklch(var(--bc) / 0.28);
+  --cs-input-border: oklch(var(--bc) / 0.20);
+}
+
+/* ── Component system ────────────────────────────────────────────────────── */
+@layer components {
+
+  /* ── Sidebar ── */
+  .cs-sidebar {
+    @apply w-64 min-h-full bg-base-100 flex flex-col;
+    border-right: 1px solid var(--cs-border);
+    padding: 0;
+  }
+
+  .cs-sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--cs-border);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: oklch(var(--bc));
+  }
+
+  .cs-nav-section {
+    padding: 20px 16px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: oklch(var(--bc) / 0.35);
+  }
+
+  .cs-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    margin: 1px 8px;
+    font-size: 13.5px;
+    color: oklch(var(--bc) / 0.65);
+    border-radius: 4px;
+    transition: background-color 0.1s, color 0.1s;
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+
+  .cs-nav-item:hover {
+    background-color: var(--cs-accent-soft);
+    color: var(--cs-accent-text);
+  }
+
+  .cs-nav-item.active {
+    background-color: var(--cs-accent-soft);
+    color: var(--cs-accent);
+    font-weight: 600;
+  }
+
+  .cs-nav-item.disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* ── Navbar ── */
+  .cs-navbar {
+    @apply flex items-center justify-between bg-base-100;
+    padding: 0 16px;
+    height: 50px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid var(--cs-border);
+    backdrop-filter: blur(10px);
+    background-color: oklch(var(--b1) / 0.92);
+  }
+
+  /* ── Page layout ── */
+  .cs-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 36px 40px;
+    width: 100%;
+  }
+
+  .cs-page-wide {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px 40px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .cs-page-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
+    color: oklch(var(--bc));
+  }
+
+  .cs-page-desc {
+    font-size: 13.5px;
+    color: oklch(var(--bc) / 0.45);
+    margin-top: 3px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── Section label ── */
+  .cs-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: oklch(var(--bc) / 0.38);
+    margin-bottom: 8px;
+  }
+
+  /* ── Card ── */
+  .cs-card {
+    background-color: oklch(var(--b1));
+    border: 1px solid var(--cs-border);
+    border-radius: 4px;
+    padding: 16px;
+    transition: border-color 0.15s;
+  }
+
+  .cs-card:hover {
+    border-color: var(--cs-border-hover);
+  }
+
+  .cs-card-link {
+    @apply cs-card;
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.15s, background-color 0.1s;
+  }
+
+  .cs-card-link:hover {
+    border-color: var(--cs-accent-border);
+    background-color: var(--cs-accent-soft);
+  }
+
+  /* ── Buttons ── */
+  .cs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 14px;
+    height: 34px;
+    font-size: 13.5px;
+    font-weight: 500;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.12s, border-color 0.12s, color 0.12s, opacity 0.1s;
+    white-space: nowrap;
+    text-decoration: none;
+    font-family: inherit;
+    letter-spacing: -0.01em;
+    outline: none;
+  }
+
+  .cs-btn:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+
+  /* Primary */
+  .cs-btn-primary {
+    @apply cs-btn;
+    background-color: var(--cs-accent);
+    border-color: var(--cs-accent);
+    color: #fff;
+  }
+
+  .cs-btn-primary:hover:not(:disabled) {
+    filter: brightness(1.1);
+  }
+
+  /* Outline */
+  .cs-btn-outline {
+    @apply cs-btn;
+    background-color: transparent;
+    border-color: var(--cs-border);
+    color: oklch(var(--bc) / 0.75);
+  }
+
+  .cs-btn-outline:hover:not(:disabled) {
+    border-color: var(--cs-accent-border);
+    color: var(--cs-accent-text);
+    background-color: var(--cs-accent-soft);
+  }
+
+  /* Ghost */
+  .cs-btn-ghost {
+    @apply cs-btn;
+    background: transparent;
+    border-color: transparent;
+    color: oklch(var(--bc) / 0.5);
+  }
+
+  .cs-btn-ghost:hover:not(:disabled) {
+    background-color: var(--cs-accent-soft);
+    color: var(--cs-accent-text);
+  }
+
+  .cs-btn-sm {
+    height: 30px;
+    padding: 0 11px;
+    font-size: 12.5px;
+  }
+
+  .cs-btn-lg {
+    height: 42px;
+    padding: 0 18px;
+    font-size: 15px;
+  }
+
+  .cs-btn-full {
+    width: 100%;
+  }
+
+  /* ── Form inputs ── */
+  .cs-input {
+    @apply w-full bg-base-100 text-base-content;
+    border: 1px solid var(--cs-input-border);
+    border-radius: 4px;
+    padding: 8px 11px;
+    font-size: 13.5px;
+    font-family: inherit;
+    line-height: 1.5;
+    transition: border-color 0.12s, box-shadow 0.12s;
+    outline: none;
+  }
+
+  .cs-input:focus {
+    border-color: var(--cs-accent);
+    box-shadow: 0 0 0 3px var(--cs-accent-soft);
+  }
+
+  .cs-input::placeholder {
+    color: oklch(var(--bc) / 0.28);
+  }
+
+  .cs-textarea {
+    @apply cs-input;
+    /* border: 1px solid var(--cs-input-border); */
+    border-width: 1px !important;
+    border-color: var(--cs-input-border) !important;
+    border-style: solid !important;
+    /* explicit — @apply may not inherit var() */
+    resize: vertical;
+    min-height: 68px;
+  }
+
+  .cs-textarea:focus {
+    border-color: var(--cs-accent);
+    box-shadow: 0 0 0 3px var(--cs-accent-soft);
+  }
+
+  .cs-select {
+    @apply cs-input;
+    border: 1px solid var(--cs-input-border);
+    /* explicit */
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 11px center;
+    padding-right: 34px;
+  }
+
+  .cs-select:focus {
+    border-color: var(--cs-accent);
+    box-shadow: 0 0 0 3px var(--cs-accent-soft);
+  }
+
+  /* ── Badge / tag ── */
+  .cs-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 7px;
+    height: 19px;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    letter-spacing: 0.01em;
+    flex-shrink: 0;
+  }
+
+  .cs-badge-neutral {
+    @apply cs-badge;
+    background-color: oklch(var(--bc) / 0.07);
+    color: oklch(var(--bc) / 0.55);
+    border-color: var(--cs-border);
+  }
+
+  .cs-badge-blue {
+    @apply cs-badge;
+    background-color: var(--cs-accent-soft);
+    color: var(--cs-accent);
+    border-color: var(--cs-accent-border);
+  }
+
+  .cs-badge-success {
+    @apply cs-badge;
+    background-color: oklch(var(--su) / 0.12);
+    color: oklch(var(--su));
+    border-color: oklch(var(--su) / 0.25);
+  }
+
+  .cs-badge-error {
+    @apply cs-badge;
+    background-color: oklch(var(--er) / 0.1);
+    color: oklch(var(--er));
+    border-color: oklch(var(--er) / 0.25);
+  }
+
+  /* ── Divider ── */
+  .cs-divider {
+    height: 1px;
+    background-color: var(--cs-border);
+    margin: 14px 0;
+  }
+
+  /* ── Mode toggle ── */
+  .cs-mode-toggle {
+    display: inline-flex;
+    border: 1px solid var(--cs-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .cs-mode-btn {
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.12s, color 0.12s;
+    color: oklch(var(--bc) / 0.45);
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    letter-spacing: -0.01em;
+  }
+
+  .cs-mode-btn.active {
+    background-color: var(--cs-accent-soft);
+    color: var(--cs-accent);
+    font-weight: 700;
+  }
+
+  /* ── Algorithm selector pills ── */
+  .cs-algo-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 4px;
+    border: 1px solid var(--cs-border);
+    cursor: pointer;
+    transition: all 0.12s;
+    background: transparent;
+    color: oklch(var(--bc) / 0.5);
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .cs-algo-pill:hover {
+    border-color: var(--cs-accent-border);
+    color: var(--cs-accent-text);
+    background-color: var(--cs-accent-soft);
+  }
+
+  .cs-algo-pill.active {
+    background-color: var(--cs-accent-soft);
+    border-color: var(--cs-accent-border);
+    color: var(--cs-accent);
+    font-weight: 700;
+  }
+
+  /* ── Grid layout for tool cards ── */
+  .cs-tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    border: 1px solid var(--cs-border);
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: var(--cs-border);
+    gap: 1px;
+  }
+
+  .cs-tool-cell {
+    display: block;
+    padding: 15px 18px;
+    background-color: oklch(var(--b1));
+    text-decoration: none;
+    transition: background-color 0.1s;
+  }
+
+  .cs-tool-cell:hover {
+    background-color: var(--cs-accent-soft);
+  }
+
+  .cs-tool-cell:hover .cs-tool-cell-name {
+    color: var(--cs-accent);
+  }
+
+  .cs-tool-cell-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: oklch(var(--bc));
+    letter-spacing: -0.01em;
+    margin-bottom: 3px;
+    transition: color 0.1s;
+  }
+
+  .cs-tool-cell-desc {
+    font-size: 12px;
+    color: oklch(var(--bc) / 0.42);
+    line-height: 1.4;
+  }
+
+  /* ── Log Terminal ── */
+  .cs-terminal {
+    border: 1px solid oklch(var(--bc) / 0.12);
+    border-radius: 4px;
+    background-color: #0d0d0d;
+    color: #e8e8e8;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 200px;
+  }
+
+  .cs-terminal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 13px;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #252525;
+    flex-shrink: 0;
+  }
+
+  .cs-terminal-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .cs-terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .cs-terminal-body {
+    padding: 12px 14px;
+    overflow-y: auto;
+    flex: 1;
+    scroll-behavior: smooth;
+  }
+
+  .cs-terminal-line {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 2px;
+    word-break: break-all;
+  }
+
+  .cs-terminal-label {
+    flex-shrink: 0;
+    font-weight: 700;
+    width: 56px;
+    text-align: right;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+
+  .cs-terminal-value {
+    color: #9a9a9a;
+    flex: 1;
+  }
+
+  .cs-terminal .log-section {
+    color: #555;
+    font-weight: 700;
+    border-top: 1px solid #1f1f1f;
+    padding-top: 6px;
+    margin-top: 6px;
+  }
+
+  .cs-terminal .log-section .cs-terminal-label {
+    color: #555;
+  }
+
+  .cs-terminal .log-section .cs-terminal-value {
+    color: #666;
+  }
+
+  .cs-terminal .log-info .cs-terminal-label {
+    color: #4a4a4a;
+  }
+
+  .cs-terminal .log-info .cs-terminal-value {
+    color: #7a7a7a;
+  }
+
+  .cs-terminal .log-success .cs-terminal-label {
+    color: #4ade80;
+  }
+
+  .cs-terminal .log-success .cs-terminal-value {
+    color: #86efac;
+  }
+
+  .cs-terminal .log-data .cs-terminal-label {
+    color: #60a5fa;
+  }
+
+  .cs-terminal .log-data .cs-terminal-value {
+    color: #93c5fd;
+  }
+
+  .cs-terminal .log-error .cs-terminal-label {
+    color: #f87171;
+  }
+
+  .cs-terminal .log-error .cs-terminal-value {
+    color: #fca5a5;
+  }
+
+  /* ── Footer ── */
+  .cs-footer {
+    border-top: 1px solid var(--cs-border);
+    padding: 14px 24px;
+    font-size: 12.5px;
+    color: oklch(var(--bc) / 0.3);
+    background-color: oklch(var(--b2));
+  }
+}
+
+/* ── Utilities ─────────────────────────────────────────────────────────── */
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: oklch(var(--bc) / 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cs-accent-border);
+}

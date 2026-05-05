@@ -1,0 +1,11 @@
+libdir=/Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/openssl
+includedir=/Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/openssl/include
+enginesdir=/Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/openssl/engines
+modulesdir=/Users/cslee/Desktop/cslee/00.cslee/dev-cs/blog/wasm-build/openssl/providers
+
+Name: OpenSSL-libcrypto
+Description: OpenSSL cryptography library
+Version: 3.3.0
+Libs: -L${libdir} -lcrypto
+Libs.private: -ldl
+Cflags: -I${includedir}

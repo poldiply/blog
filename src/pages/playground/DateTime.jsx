@@ -4,169 +4,161 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
-import 'dayjs/locale/ko'; // 한국어 설정
+import 'dayjs/locale/ko';
 
-// 플러그인 장착
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(relativeTime);
 dayjs.extend(duration);
 dayjs.locale('ko');
 
+const TIMEZONES = [
+  { city: 'Seoul (KST)', tz: 'Asia/Seoul' },
+  { city: 'UTC', tz: 'UTC', isUtc: true },
+  { city: 'New York (EST)', tz: 'America/New_York' },
+  { city: 'London (GMT)', tz: 'Europe/London' },
+  { city: 'Tokyo (JST)', tz: 'Asia/Tokyo' },
+  { city: 'Los Angeles (PST)', tz: 'America/Los_Angeles' },
+];
+
 export default function DateTime() {
-  // 1. 현재 시간 (실시간 시계용)
-  const [now, setNow] = useState(dayjs());
-  
-  // 2. 변환기 상태
-  const [input, setInput] = useState(Math.floor(Date.now() / 1000).toString()); // 기본값: 현재 타임스탬프
-  const [parsedDate, setParsedDate] = useState(dayjs());
-
-  // 3. 기간 계산기 상태
+  const [now, setNow]             = useState(dayjs());
+  const [input, setInput]         = useState(Math.floor(Date.now() / 1000).toString());
+  const [parsed, setParsed]       = useState(dayjs());
   const [startDate, setStartDate] = useState(dayjs().format('YYYY-MM-DD'));
-  const [endDate, setEndDate] = useState(dayjs().add(100, 'day').format('YYYY-MM-DD'));
+  const [endDate, setEndDate]     = useState(dayjs().add(100, 'day').format('YYYY-MM-DD'));
 
-  // 실시간 시계 타이머
   useEffect(() => {
-    const timer = setInterval(() => setNow(dayjs()), 1000);
-    return () => clearInterval(timer);
+    const t = setInterval(() => setNow(dayjs()), 1000);
+    return () => clearInterval(t);
   }, []);
 
-  // 입력값이 바뀔 때마다 날짜 파싱 시도
   useEffect(() => {
     if (!input) return;
-    
-    let date;
-    // 숫자만 있으면 타임스탬프로 간주
+    let d;
     if (/^\d+$/.test(input)) {
-      const num = parseInt(input);
-      // 10자리(초) vs 13자리(밀리초) 자동 감지
-      if (input.length <= 10) date = dayjs.unix(num);
-      else date = dayjs(num);
-    } else {
-      // 그 외엔 문자열 파싱
-      date = dayjs(input);
-    }
-
-    if (date.isValid()) {
-      setParsedDate(date);
-    }
+      d = input.length <= 10 ? dayjs.unix(parseInt(input)) : dayjs(parseInt(input));
+    } else { d = dayjs(input); }
+    if (d.isValid()) setParsed(d);
   }, [input]);
 
-  // 기간 계산 결과
-  const diffDays = dayjs(endDate).diff(dayjs(startDate), 'day');
+  const diffDays  = dayjs(endDate).diff(dayjs(startDate), 'day');
   const diffHours = dayjs(endDate).diff(dayjs(startDate), 'hour');
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)] w-full gap-4">
-      
-      {/* 헤더 */}
-      <div className="border-b border-base-300 pb-2 flex-none">
-        <h2 className="text-3xl font-bold text-base-content">Date & Time Tools ⏰</h2>
-        <p className="text-base-content/70 mt-1">타임스탬프 변환, 세계 시간, 기간 계산을 한곳에서 처리하세요.</p>
+    <div className="cs-page" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+      <div>
+        <h1 className="cs-page-title">날짜 / 시간</h1>
+        <p className="cs-page-desc">타임스탬프 변환, 세계 시각, 기간 계산</p>
       </div>
 
-      {/* 메인 컨텐츠 (스크롤 가능) */}
-      <div className="flex-1 overflow-y-auto min-h-0 space-y-4 pr-2">
-        
-        {/* 섹션 1: 스마트 변환기 */}
-        <div className="card bg-base-100 shadow-md border border-base-200">
-          <div className="card-body p-4">
-            <h3 className="card-title text-lg mb-2">🔄 스마트 변환기</h3>
-            
-            <div className="form-control w-full">
-              <label className="label pt-0"><span className="label-text">Input (타임스탬프 or 날짜 문자열)</span></label>
-              <input 
-                type="text" 
-                className="input input-bordered border-2 border-gray-300 dark:border-gray-600 font-mono focus:border-primary"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="예: 1704067200 또는 2025-01-01"
-              />
-            </div>
+      {/* Converter */}
+      <div className="cs-card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="cs-label">타임스탬프 / 날짜 변환</div>
+        <input
+          className="cs-input"
+          style={{ fontFamily: 'JetBrains Mono, monospace', maxWidth: 380 }}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="예: 1704067200 또는 2025-01-01"
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
+          {[
+            { label: 'Unix Timestamp (초)', value: parsed.unix() },
+            { label: 'Unix Timestamp (ms)', value: parsed.valueOf() },
+            { label: 'ISO 8601', value: parsed.toISOString() },
+            { label: 'Local Time (한국)', value: parsed.format('YYYY-MM-DD HH:mm:ss') },
+            { label: '상대 시간', value: parsed.fromNow() },
+            { label: 'UTC', value: parsed.utc().format('YYYY-MM-DD HH:mm:ss') },
+          ].map(item => (
+            <ResultBox key={item.label} label={item.label} value={item.value} />
+          ))}
+        </div>
+      </div>
 
-            {/* 변환 결과 그리드 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <ResultBox label="Unix Timestamp (초)" value={parsedDate.unix()} />
-              <ResultBox label="Unix Timestamp (밀리초)" value={parsedDate.valueOf()} />
-              <ResultBox label="ISO 8601 (서버용)" value={parsedDate.toISOString()} color="text-primary" />
-              <ResultBox label="Local Time (한국)" value={parsedDate.format('YYYY-MM-DD HH:mm:ss')} />
-              <ResultBox label="Relative (상대 시간)" value={parsedDate.fromNow()} />
-              <ResultBox label="UTC (협정 세계시)" value={parsedDate.utc().format('YYYY-MM-DD HH:mm:ss')} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+
+        {/* World Clock */}
+        <div className="cs-card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="cs-label">세계 시각 (실시간)</div>
+          {TIMEZONES.map(z => (
+            <div key={z.tz} style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: '8px 0', borderBottom: '1px solid var(--cs-border)',
+            }}>
+              <span style={{ fontSize: 13, fontWeight: 500, color: 'oklch(var(--bc) / 0.65)' }}>
+                {z.city}
+              </span>
+              <span style={{
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 600,
+                color: z.isUtc ? 'var(--cs-accent)' : 'oklch(var(--bc))',
+              }}>
+                {z.isUtc ? now.utc().format('HH:mm:ss') : now.tz(z.tz).format('HH:mm:ss')}
+              </span>
             </div>
-          </div>
+          ))}
         </div>
 
-        {/* 하단: 2단 분리 (세계 시계 + 기간 계산기) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          
-          {/* 섹션 2: 세계 시계 */}
-          <div className="card bg-base-100 shadow-md border border-base-200">
-            <div className="card-body p-4">
-              <h3 className="card-title text-lg mb-4">🌍 World Clock (실시간)</h3>
-              <div className="space-y-3">
-                <ClockRow city="🇰🇷 Seoul" time={now} tz="Asia/Seoul" />
-                <ClockRow city="🇬🇧 UTC" time={now} tz="UTC" isUtc />
-                <ClockRow city="🇺🇸 New York" time={now} tz="America/New_York" />
-                <ClockRow city="🇬🇧 London" time={now} tz="Europe/London" />
-              </div>
+        {/* D-Day Calculator */}
+        <div className="cs-card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="cs-label">기간 계산기 (D-Day)</div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input type="date" className="cs-input" value={startDate} onChange={e => setStartDate(e.target.value)} style={{ flex: 1 }} />
+            <span style={{ color: 'oklch(var(--bc) / 0.4)', fontWeight: 600, padding: '0 4px' }}>~</span>
+            <input type="date" className="cs-input" value={endDate} onChange={e => setEndDate(e.target.value)} style={{ flex: 1 }} />
+          </div>
+          <div style={{
+            border: '1px solid var(--cs-border)', borderRadius: 4, padding: '16px 20px',
+            display: 'flex', flexDirection: 'column', gap: 6, marginTop: 4
+          }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'oklch(var(--bc) / 0.35)' }}>
+              일수 차이
+            </div>
+            <div style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.03em', color: 'var(--cs-accent)', lineHeight: 1 }}>
+              {Math.abs(diffDays).toLocaleString()}일
+            </div>
+            <div style={{ fontSize: 12.5, color: 'oklch(var(--bc) / 0.45)' }}>
+              {diffDays >= 0 ? '이후' : '이전'} · 총 {Math.abs(diffHours).toLocaleString()} 시간
             </div>
           </div>
-
-          {/* 섹션 3: 기간 계산기 */}
-          <div className="card bg-base-100 shadow-md border border-base-200">
-            <div className="card-body p-4">
-              <h3 className="card-title text-lg mb-4">📅 기간 계산기 (D-Day)</h3>
-              
-              <div className="flex flex-col gap-4">
-                <div className="flex gap-2 items-center">
-                  <input type="date" className="input input-bordered w-full" value={startDate} onChange={(e)=>setStartDate(e.target.value)} />
-                  <span className="font-bold">~</span>
-                  <input type="date" className="input input-bordered w-full" value={endDate} onChange={(e)=>setEndDate(e.target.value)} />
-                </div>
-
-                <div className="stats shadow bg-base-200 w-full">
-                  <div className="stat place-items-center">
-                    <div className="stat-title">일수 차이</div>
-                    <div className="stat-value text-primary">{diffDays}일</div>
-                    <div className="stat-desc">총 {diffHours.toLocaleString()} 시간</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
     </div>
   );
 }
 
-// 작은 컴포넌트들 (코드 깔끔하게!)
-function ResultBox({ label, value, color }) {
+function ResultBox({ label, value }) {
+  const [copied, setCopied] = useState(false);
   const copy = () => {
     navigator.clipboard.writeText(value.toString());
-    alert('복사되었습니다!');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
   };
   return (
-    <div className="form-control cursor-pointer group" onClick={copy}>
-      <label className="label py-0"><span className="label-text text-xs text-base-content/60">{label}</span></label>
-      <div className={`input input-sm input-bordered flex items-center font-mono bg-base-200 group-hover:border-primary ${color || ''}`}>
+    <div
+      onClick={copy}
+      style={{
+        border: '1px solid var(--cs-border)',
+        borderRadius: 4, padding: '8px 10px', cursor: 'pointer',
+        transition: 'border-color 0.12s, background-color 0.12s',
+        backgroundColor: 'oklch(var(--b2))',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.borderColor = 'var(--cs-accent-border)';
+        e.currentTarget.style.backgroundColor = 'var(--cs-accent-soft)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.borderColor = 'var(--cs-border)';
+        e.currentTarget.style.backgroundColor = 'oklch(var(--b2))';
+      }}
+    >
+      <div style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'oklch(var(--bc) / 0.35)', marginBottom: 3 }}>
+        {copied ? '복사됨' : label}
+      </div>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12.5, color: copied ? 'var(--cs-accent)' : 'oklch(var(--bc))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {value}
       </div>
-    </div>
-  );
-}
-
-function ClockRow({ city, time, tz, isUtc }) {
-  return (
-    <div className="flex justify-between items-center border-b border-base-200 pb-2 last:border-0">
-      <span className="font-bold">{city}</span>
-      <span className={`font-mono ${isUtc ? 'text-primary font-bold' : ''}`}>
-        {isUtc ? time.utc().format('HH:mm:ss') : time.tz(tz).format('HH:mm:ss')}
-        <span className="text-xs text-base-content/50 ml-2">
-          {isUtc ? '' : time.tz(tz).format('A')}
-        </span>
-      </span>
     </div>
   );
 }

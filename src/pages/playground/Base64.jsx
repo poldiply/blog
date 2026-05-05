@@ -1,103 +1,82 @@
 import { useState } from 'react';
 
 export default function Base64() {
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [input, setInput]         = useState('');
+  const [output, setOutput]       = useState('');
+  const [copied, setCopied]       = useState(false);
 
-  const handleEncode = () => {
+  const encode = () => {
     try {
-      if (!input) { setOutput(""); return; }
-      const encoded = btoa(new TextEncoder().encode(input).reduce((data, byte) => data + String.fromCharCode(byte), ''));
-      setOutput(encoded);
-    } catch (e) { setOutput("에러: 인코딩 실패"); }
+      if (!input) { setOutput(''); return; }
+      setOutput(btoa(new TextEncoder().encode(input).reduce((d, b) => d + String.fromCharCode(b), '')));
+    } catch { setOutput('오류: 인코딩 실패'); }
   };
 
-  const handleDecode = () => {
+  const decode = () => {
     try {
-      if (!input) { setOutput(""); return; }
-      const decoded = new TextDecoder().decode(Uint8Array.from(atob(input), c => c.charCodeAt(0)));
-      setOutput(decoded);
-    } catch (e) { setOutput("에러: 올바른 Base64 형식이 아닙니다."); }
+      if (!input) { setOutput(''); return; }
+      setOutput(new TextDecoder().decode(Uint8Array.from(atob(input), c => c.charCodeAt(0))));
+    } catch { setOutput('오류: 올바른 Base64 형식이 아닙니다.'); }
   };
 
-  const handleCopy = () => {
+  const copy = () => {
     if (!output) return;
     navigator.clipboard.writeText(output);
-    setCopySuccess(true);
-    setTimeout(() => setCopySuccess(false), 2000);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
+  const clear = () => { setInput(''); setOutput(''); };
+
   return (
-    // 1. 전체 높이 설정 (JSON Formatter와 동일하게 10rem 여백)
-    <div className="flex flex-col h-[calc(100vh-10rem)] w-full gap-4">
-      
-      {/* 헤더 (flex-none: 고정 높이) */}
-      <div className="border-b border-base-300 pb-2 flex-none">
-        <h2 className="text-3xl font-bold text-base-content">Base64 Converter</h2>
-        <p className="text-base-content/70 mt-1">텍스트 ↔ Base64 변환 도구</p>
+    <div className="cs-page" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+      <div>
+        <h1 className="cs-page-title">Base64</h1>
+        <p className="cs-page-desc">텍스트 ↔ Base64 인코딩/디코딩 변환 도구</p>
       </div>
 
-      {/* 메인 카드 (flex-1: 남는 공간 다 차지) */}
-      <div className="card bg-base-100 shadow-xl border border-base-200 w-full flex-1 overflow-hidden">
-        <div className="card-body p-4 flex flex-col h-full">
-          
-          {/* 2. 입력 영역 (flex-1: 카드 내부 공간의 절반 차지) */}
-          {/* min-h-0: 스크롤 및 영역 침범 방지 필수 클래스 */}
-          <div className="flex flex-col flex-1 min-h-0">
-            <label className="label w-full flex justify-between items-center pt-0 pb-1">
-              <span className="label-text font-bold text-lg">Input (입력)</span>
-              <span className="badge badge-ghost">{input.length}자</span>
-            </label>
-            
-            {/* textarea도 flex-1로 부모 높이에 꽉 차게 설정 */}
-            <textarea 
-              className="textarea textarea-bordered border-2 border-gray-300 dark:border-gray-600 w-full flex-1 font-mono text-base leading-relaxed focus:border-primary focus:outline-none resize-none"
-              placeholder="여기에 텍스트를 입력하세요..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            ></textarea>
-          </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
 
-          {/* 3. 버튼 그룹 (flex-none: 고정 높이, py-3으로 간격 확보) */}
-          <div className="flex-none py-3">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <button onClick={handleEncode} className="btn btn-primary w-full">
-                ⬇️ Encode
-              </button>
-              <button onClick={handleDecode} className="btn btn-secondary w-full">
-                ⬆️ Decode
-              </button>
-              <button 
-                onClick={() => {setInput(''); setOutput('');}} 
-                className="btn btn-outline btn-error w-full"
-              >
-                🗑️ Clear
-              </button>
-            </div>
+        {/* Input */}
+        <div className="cs-card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="cs-label">입력</div>
+            <span style={{ fontSize: 11.5, color: 'oklch(var(--bc) / 0.35)', fontVariantNumeric: 'tabular-nums' }}>
+              {input.length}자
+            </span>
           </div>
-
-          {/* 4. 결과 영역 (flex-1: 나머지 절반 차지) */}
-          <div className="flex flex-col flex-1 min-h-0">
-            <label className="label w-full flex justify-between items-center pt-0 pb-1">
-              <span className="label-text font-bold text-lg">Output (결과)</span>
-              <button 
-                onClick={handleCopy} 
-                className={`btn btn-xs ${copySuccess ? 'btn-success text-white' : 'btn-neutral'}`}
-                disabled={!output}
-              >
-                {copySuccess ? '✅ 복사완료' : '📋 결과 복사'}
-              </button>
-            </label>
-            
-            <textarea 
-              className="textarea textarea-bordered border-2 border-gray-300 dark:border-gray-600 bg-base-200 w-full flex-1 font-mono text-base leading-relaxed resize-none"
-              readOnly 
-              placeholder="결과가 여기에 나타납니다."
-              value={output}
-            ></textarea>
+          <textarea
+            className="cs-textarea"
+            rows={10}
+            placeholder="텍스트 또는 Base64 문자열을 입력하세요"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13 }}
+          />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={encode} className="cs-btn cs-btn-primary" style={{ flex: 1 }}>인코딩 (Encode)</button>
+            <button onClick={decode} className="cs-btn cs-btn-outline" style={{ flex: 1 }}>디코딩 (Decode)</button>
           </div>
+          <button onClick={clear} className="cs-btn cs-btn-ghost" style={{ fontSize: 12, alignSelf: 'flex-start' }}>Clear</button>
+        </div>
 
+        {/* Output */}
+        <div className="cs-card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="cs-label">결과</div>
+            <button onClick={copy} className={`cs-btn cs-btn-sm ${copied ? 'cs-btn-primary' : 'cs-btn-outline'}`}>
+              {copied ? '복사 완료' : '결과 복사'}
+            </button>
+          </div>
+          <textarea
+            className="cs-textarea"
+            rows={10}
+            readOnly
+            placeholder="결과가 여기 표시됩니다"
+            value={output}
+            style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, backgroundColor: 'oklch(var(--b2))' }}
+          />
         </div>
       </div>
     </div>

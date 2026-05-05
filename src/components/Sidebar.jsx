@@ -1,53 +1,67 @@
 import { Link, useLocation } from 'react-router-dom';
 
+const menus = [
+  { name: '홈', path: '/' },
+  { section: '개발자 도구' },
+  { name: 'Base64', path: '/playground/base64' },
+  { name: 'JSON 포맷터', path: '/playground/json' },
+  { name: '텍스트 비교', path: '/playground/diff' },
+  { name: '날짜/시간', path: '/playground/datetime' },
+  { name: 'QR 코드', path: '/playground/qr' },
+  { section: '암호 알고리즘' },
+  { name: 'Overview', path: '/crypto' },
+  { name: '해시 함수', path: '/crypto/hash' },
+  { name: '블록 암호', path: '/crypto/block' },
+  { name: '공개키 암호', path: '/crypto/pubkey' },
+  { name: '키 설정', path: '/crypto/agreement' },
+  { name: '전자서명', path: '/crypto/signature' },
+  { name: '메시지 인증', path: '/crypto/mac' },
+  { name: 'PQC', path: '/crypto/pqc' },
+  { name: 'KPQC', path: '/crypto/kpqc' },
+];
+
 export default function Sidebar() {
   const location = useLocation();
 
-  // 메뉴 리스트
-  const menus = [
-    { name: '🏠 홈', path: '/' },
-    { category: '텍스트 도구' },
-    { name: '🔄 Base64 변환기', path: '/playground/base64' },
-    { name: '🔒 해시 생성기', path: '/playground/hash' },
-    { name: '📝 JSON 포맷터', path: '/playground/json' },
-    { name: '🔍 텍스트 비교', path: '/playground/diff' },
-    { category: '유틸리티' },
-    { name: '⏰ 날짜/시간 도구', path: '/playground/datetime' },
-    { name: '📱 QR 코드 생성기', path: '/playground/qr' },
-    { category: '이미지 도구 (예정)' },    
-    { name: '🖼️ 이미지 압축/변환', path: '/playground/image' },
-    { category: '보안 도구 (예정)' },
-    { name: '🔑 JWT 디코더', path: '/playground/jwt' },
-  ];
-
-  // ✨ 핵심 기능: 사이드바 닫기 함수
   const closeSidebar = () => {
-    // Layout.jsx에 있는 체크박스 ID('my-drawer-2')를 찾아서 체크 해제
-    const drawerCheckbox = document.getElementById('my-drawer-2');
-    if (drawerCheckbox) {
-      drawerCheckbox.checked = false;
-    }
+    const el = document.getElementById('sidebar-toggle');
+    if (el) el.checked = false;
   };
 
   return (
-    <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-      <li className="mb-4 font-bold text-lg px-4">Menu</li>
-      {menus.map((menu, index) => {
-        if (menu.category) {
-          return <li key={index} className="menu-title mt-4">{menu.category}</li>;
-        }
-        return (
-          <li key={index}>
-            <Link 
-              to={menu.path} 
-              className={location.pathname === menu.path ? "active" : ""}
-              onClick={closeSidebar} // 👈 클릭할 때마다 닫기 함수 실행!
+    <aside className="cs-sidebar">
+      <div className="cs-sidebar-logo">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="6" height="6" fill="currentColor" opacity="0.9"/>
+          <rect x="9" y="1" width="6" height="6" fill="currentColor" opacity="0.45"/>
+          <rect x="1" y="9" width="6" height="6" fill="currentColor" opacity="0.45"/>
+          <rect x="9" y="9" width="6" height="6" fill="currentColor" opacity="0.9"/>
+        </svg>
+        <span>CS Lee</span>
+      </div>
+
+      <nav style={{ flex: 1, overflowY: 'auto', padding: '6px 0 16px' }}>
+        {menus.map((item, i) => {
+          if (item.section) {
+            return <div key={i} className="cs-nav-section">{item.section}</div>;
+          }
+          const isActive = location.pathname === item.path;
+          return (
+            <Link
+              key={i}
+              to={item.path}
+              onClick={item.disabled ? undefined : closeSidebar}
+              className={`cs-nav-item${isActive ? ' active' : ''}${item.disabled ? ' disabled' : ''}`}
             >
-              {menu.name}
+              {item.name}
             </Link>
-          </li>
-        );
-      })}
-    </ul>
+          );
+        })}
+      </nav>
+
+      <div style={{ padding: '10px 16px', borderTop: '1px solid var(--cs-border)', fontSize: '11px', color: 'oklch(var(--bc) / 0.28)' }}>
+        dev-cs.cloud
+      </div>
+    </aside>
   );
 }
