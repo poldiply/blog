@@ -68,6 +68,8 @@ emcc -O3 -s WASM=1 \
   -s EXPORTED_RUNTIME_METHODS='["cwrap", "ccall", "setValue", "getValue"]' \
   -s EXPORTED_FUNCTIONS='["_malloc", "_free"]' \
   -s ALLOW_MEMORY_GROWTH=1 \
+  -s STACK_SIZE=2MB \
+  -s EXPORT_ES6=1 \
   -s MODULARIZE=1 \
   -s EXPORT_NAME="createOQSModule" \
   -I./liboqs/src \
@@ -75,4 +77,9 @@ emcc -O3 -s WASM=1 \
   -o oqs.js \
   oqs_wrapper.c ./liboqs/build/lib/liboqs.a
 
+echo "Copying outputs to app directories..."
+cp oqs.js ../src/lib/pqc/oqs.js
+cp oqs.wasm ../public/oqs.wasm
+
 echo "Build complete. Output: oqs.js and oqs.wasm"
+

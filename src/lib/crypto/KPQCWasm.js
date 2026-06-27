@@ -4,18 +4,18 @@ class KPQCWasm {
     constructor() {
         this.module = null;
         this.initialized = false;
-        
+
         // Corrected Algorithm Parameters from api.h
         this.ALGS = {
             // NTRU+ KEM (NTRU+ sk is (poly << 1) + 32)
-            'ntruplus576':  { type: 'kem', pkSize: 864,  skSize: 1760, ctSize: 864,  ssSize: 32 },
-            'ntruplus768':  { type: 'kem', pkSize: 1152, skSize: 2336, ctSize: 1152, ssSize: 32 },
-            'ntruplus864':  { type: 'kem', pkSize: 1296, skSize: 2624, ctSize: 1296, ssSize: 32 },
+            'ntruplus576': { type: 'kem', pkSize: 864, skSize: 1760, ctSize: 864, ssSize: 32 },
+            'ntruplus768': { type: 'kem', pkSize: 1152, skSize: 2336, ctSize: 1152, ssSize: 32 },
+            'ntruplus864': { type: 'kem', pkSize: 1296, skSize: 2624, ctSize: 1296, ssSize: 32 },
             'ntruplus1152': { type: 'kem', pkSize: 1728, skSize: 3488, ctSize: 1728, ssSize: 32 },
 
             // SMAUG-T KEM
-            'smaugt1': { type: 'kem', pkSize: 672,  skSize: 832,  ctSize: 672,  ssSize: 32 },
-            'smaugt3': { type: 'kem', pkSize: 1088, skSize: 1312, ctSize: 992,  ssSize: 32 },
+            'smaugt1': { type: 'kem', pkSize: 672, skSize: 832, ctSize: 672, ssSize: 32 },
+            'smaugt3': { type: 'kem', pkSize: 1088, skSize: 1312, ctSize: 992, ssSize: 32 },
             'smaugt5': { type: 'kem', pkSize: 1440, skSize: 1728, ctSize: 1376, ssSize: 32 },
 
             // AIMer Signature
@@ -27,7 +27,7 @@ class KPQCWasm {
             'aimer256s': { type: 'sign', pkSize: 64, skSize: 96, sigSize: 17056 },
 
             // HAETAE Signature
-            'haetae2': { type: 'sign', pkSize: 992,  skSize: 1408, sigSize: 1474 },
+            'haetae2': { type: 'sign', pkSize: 992, skSize: 1408, sigSize: 1474 },
             'haetae3': { type: 'sign', pkSize: 1472, skSize: 2112, sigSize: 2349 },
             'haetae5': { type: 'sign', pkSize: 2080, skSize: 2752, sigSize: 2948 }
         };
@@ -160,14 +160,14 @@ class KPQCWasm {
         const sk = this._fromHex(skHex);
         const skPtr = this.module._malloc(sk.length);
         const msgPtr = this.module._malloc(msg.length);
-        const smPtr = this.module._malloc(msg.length + alg.sigSize + 1024); 
-        const smlenPtr = this.module._malloc(8); 
+        const smPtr = this.module._malloc(msg.length + alg.sigSize + 1024);
+        const smlenPtr = this.module._malloc(8);
 
         this.module.HEAPU8.set(sk, skPtr);
         this.module.HEAPU8.set(msg, msgPtr);
 
         try {
-            const res = this.module.ccall('kpqc_sign', 'number', ['string', 'number', 'number', 'number', 'number', 'number'], 
+            const res = this.module.ccall('kpqc_sign', 'number', ['string', 'number', 'number', 'number', 'number', 'number'],
                 [algId, smPtr, smlenPtr, msgPtr, msg.length, skPtr]);
             if (res !== 0) throw new Error(`Signing failed with code ${res}`);
 
@@ -201,9 +201,9 @@ class KPQCWasm {
         this.module.HEAPU8.set(sm, smPtr);
 
         try {
-            const res = this.module.ccall('kpqc_sign_open', 'number', ['string', 'number', 'number', 'number', 'number', 'number'], 
+            const res = this.module.ccall('kpqc_sign_open', 'number', ['string', 'number', 'number', 'number', 'number', 'number'],
                 [algId, msgPtr, mlenPtr, smPtr, sm.length, pkPtr]);
-            
+
             return { verified: res === 0 };
         } finally {
             this.module._free(pkPtr);

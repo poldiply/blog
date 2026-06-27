@@ -57,9 +57,18 @@ export class PQCWasm {
         this.module.ccall('disable_custom_rng', null, [], []);
     }
 
+    _mapAlgName(algName) {
+        if (!algName) return algName;
+        if (algName.toUpperCase().startsWith('SLH-DSA-')) {
+            return algName.toUpperCase().replace(/-/g, '_').replace('SLH_DSA', 'SLH_DSA_PURE');
+        }
+        return algName;
+    }
+
     // --- KEM ---
     kemKeypair(algName, seedHex = null) {
         if (!this.ready) throw new Error("WASM not ready");
+        algName = this._mapAlgName(algName);
         if (seedHex) this._setRNGSeed(this._hexToBytes(seedHex));
         
         const kem = this.module.ccall('oqs_kem_new', 'number', ['string'], [algName]);
@@ -93,6 +102,7 @@ export class PQCWasm {
 
     kemEncaps(algName, pkHex, seedHex = null) {
         if (!this.ready) throw new Error("WASM not ready");
+        algName = this._mapAlgName(algName);
         if (seedHex) this._setRNGSeed(this._hexToBytes(seedHex));
 
         const kem = this.module.ccall('oqs_kem_new', 'number', ['string'], [algName]);
@@ -131,6 +141,7 @@ export class PQCWasm {
 
     kemDecaps(algName, ctHex, skHex) {
         if (!this.ready) throw new Error("WASM not ready");
+        algName = this._mapAlgName(algName);
         const kem = this.module.ccall('oqs_kem_new', 'number', ['string'], [algName]);
         if (!kem) throw new Error(`Algorithm ${algName} not supported.`);
 
@@ -165,6 +176,7 @@ export class PQCWasm {
     // --- SIG ---
     sigKeypair(algName, seedHex = null) {
         if (!this.ready) throw new Error("WASM not ready");
+        algName = this._mapAlgName(algName);
         if (seedHex) this._setRNGSeed(this._hexToBytes(seedHex));
         
         const sig = this.module.ccall('oqs_sig_new', 'number', ['string'], [algName]);
@@ -198,6 +210,7 @@ export class PQCWasm {
 
     sigSign(algName, msgHex, skHex, seedHex = null) {
         if (!this.ready) throw new Error("WASM not ready");
+        algName = this._mapAlgName(algName);
         if (seedHex) this._setRNGSeed(this._hexToBytes(seedHex));
 
         const sig = this.module.ccall('oqs_sig_new', 'number', ['string'], [algName]);
@@ -243,6 +256,7 @@ export class PQCWasm {
 
     sigVerify(algName, msgHex, sigHex, pkHex) {
         if (!this.ready) throw new Error("WASM not ready");
+        algName = this._mapAlgName(algName);
         const sig = this.module.ccall('oqs_sig_new', 'number', ['string'], [algName]);
         if (!sig) throw new Error(`Algorithm ${algName} not supported.`);
 

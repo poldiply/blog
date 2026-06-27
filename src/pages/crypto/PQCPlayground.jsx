@@ -41,6 +41,8 @@ export default function PQCPlayground() {
   const kpRef    = useRef(null);
   const ctRef    = useRef(null);
   const sigRef   = useRef(null);
+  const encapSsRef = useRef(null);
+  const cavpEncapSsRef = useRef(null);
 
   // CAVP states
   const [cavpKemZ,  setCavpKemZ]  = useState('');
@@ -115,6 +117,7 @@ export default function PQCPlayground() {
     try {
       const res = pqcWasm.kemEncaps(algoParam, kpRef.current.pk);
       ctRef.current = res.ct;
+      encapSsRef.current = res.ss;
       addLog([
         { type: 'section', label: `${algoParam} Encapsulation` },
         { type: 'hex',     label: 'ct', value: res.ct },
@@ -127,10 +130,12 @@ export default function PQCPlayground() {
     if (!kpRef.current || !ctRef.current) { addLog([{ type: 'error', label: 'Error', value: 'Encapsulate first' }]); return; }
     try {
       const res = pqcWasm.kemDecaps(algoParam, ctRef.current, kpRef.current.sk);
+      const isMatched = encapSsRef.current === res.ss;
       addLog([
         { type: 'section', label: `${algoParam} Decapsulation` },
-        { type: 'hex',     label: 'ss', value: res.ss },
-        { type: 'info',    label: 'Note', value: 'Compare ss with encapsulation ss — they should match.' },
+        { type: 'hex',     label: 'encapsulated ss', value: encapSsRef.current || '' },
+        { type: 'hex',     label: 'decapsulated ss', value: res.ss },
+        { type: 'result',  label: 'KEM Shared Secret Comparison', value: isMatched ? 'MATCHED' : 'MISMATCHED' },
       ]);
     } catch(e) { addLog([{ type: 'error', label: 'Error', value: e.message }]); }
   };
@@ -172,7 +177,7 @@ export default function PQCPlayground() {
       const ok = pqcWasm.sigVerify(algoParam, msgHex, sigRef.current, kpRef.current.pk);
       addLog([
         { type: 'section', label: `${algoParam} Verify` },
-        { type: ok ? 'success' : 'error', label: 'Result', value: ok ? 'VALID' : 'INVALID' },
+        { type: 'result',  label: 'Signature Verification', value: ok ? 'VALID' : 'INVALID' },
       ]);
     } catch(e) { addLog([{ type: 'error', label: 'Error', value: e.message }]); }
   };
@@ -196,7 +201,7 @@ export default function PQCPlayground() {
     try {
       if (!cavpKemPk || !cavpKemM) throw new Error('Enter pk and random seed (m)');
       const res = pqcWasm.kemEncaps(algoParam, cavpKemPk, cavpKemM);
-
+      cavpEncapSsRef.current = res.ss;
       addLog([
         { type: 'section', label: `${algoParam} CAVP Encapsulation` },
         { type: 'hex',     label: 'ct', value: res.ct },
@@ -209,9 +214,14 @@ export default function PQCPlayground() {
     try {
       if (!cavpKemSk || !cavpKemCt) throw new Error('Enter sk and ct');
       const res = pqcWasm.kemDecaps(algoParam, cavpKemCt, cavpKemSk);
+      const hasEncap = !!cavpEncapSsRef.current;
+      const isMatched = hasEncap && cavpEncapSsRef.current === res.ss;
+      const resultVal = hasEncap ? (isMatched ? 'MATCHED' : 'MISMATCHED') : 'DECAP_SUCCESS';
       addLog([
         { type: 'section', label: `${algoParam} CAVP Decapsulation` },
-        { type: 'hex',     label: 'ss', value: res.ss },
+        { type: 'hex',     label: 'encapsulated ss', value: cavpEncapSsRef.current || '' },
+        { type: 'hex',     label: 'decapsulated ss', value: res.ss },
+        { type: 'result',  label: 'KEM CAVP Shared Secret Comparison', value: resultVal },
       ]);
     } catch(e) { addLog([{ type: 'error', label: 'Error', value: e.message }]); }
   };
@@ -250,7 +260,7 @@ export default function PQCPlayground() {
       const ok = pqcWasm.sigVerify(algoParam, cavpDsaMsg, cavpDsaSig, cavpDsaPk);
       addLog([
         { type: 'section', label: `${algoParam} CAVP Verify` },
-        { type: ok ? 'success' : 'error', label: 'Result', value: ok ? 'VALID' : 'INVALID' },
+        { type: 'result',  label: 'CAVP Signature Verification', value: ok ? 'VALID' : 'INVALID' },
       ]);
     } catch(e) { addLog([{ type: 'error', label: 'Error', value: e.message }]); }
   };
