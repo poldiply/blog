@@ -3,12 +3,6 @@ import Layout from './components/Layout';
 
 // 기존 playground 페이지들
 import Home from './pages/Home';
-import Base64 from './pages/playground/Base64';
-import PlayHash from './pages/playground/Hash';
-import JsonFormatter from './pages/playground/JsonFormatter';
-import QrGenerator from './pages/playground/QrGenerator';
-import DateTime from './pages/playground/DateTime';
-import TextDiff from './pages/playground/TextDiff';
 
 // 암호 알고리즘 Playground
 import CryptoHome       from './pages/crypto/CryptoHome';
@@ -29,13 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        {/* 기존 Developer Tools Playground */}
-        <Route path="/playground/base64"   element={<Base64 />} />
-        <Route path="/playground/hash"     element={<PlayHash />} />
-        <Route path="/playground/json"     element={<JsonFormatter />} />
-        <Route path="/playground/qr"       element={<QrGenerator />} />
-        <Route path="/playground/datetime" element={<DateTime />} />
-        <Route path="/playground/diff"     element={<TextDiff />} />
+
 
         {/* 암호 알고리즘 Playground */}
         <Route path="/crypto"              element={<CryptoHome />} />

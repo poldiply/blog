@@ -2,12 +2,6 @@ import { Link, useLocation } from 'react-router-dom';
 
 const menus = [
   { name: '홈', path: '/' },
-  { section: '개발자 도구' },
-  { name: 'Base64', path: '/playground/base64' },
-  { name: 'JSON 포맷터', path: '/playground/json' },
-  { name: '텍스트 비교', path: '/playground/diff' },
-  { name: '날짜/시간', path: '/playground/datetime' },
-  { name: 'QR 코드', path: '/playground/qr' },
   { section: '암호 알고리즘' },
   { name: 'Overview', path: '/crypto' },
   { name: '해시 함수', path: '/crypto/hash' },

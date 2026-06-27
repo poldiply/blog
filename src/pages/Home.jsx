@@ -1,13 +1,5 @@
 import { Link } from 'react-router-dom';
 
-const devTools = [
-  { name: 'Base64', desc: 'Encode / decode Base64', path: '/playground/base64' },
-  { name: 'JSON 포맷터', desc: 'Format and validate JSON', path: '/playground/json' },
-  { name: '텍스트 비교', desc: '두 텍스트 비교 (diff)', path: '/playground/diff' },
-  { name: '날짜/시간', desc: '타임스탬프 변환, 세계 시각', path: '/playground/datetime' },
-  { name: 'QR 코드', desc: 'QR 코드 생성', path: '/playground/qr' },
-];
-
 const cryptoTools = [
   { name: '해시 함수', desc: 'SHA-2 / SHA-3 / SHAKE', path: '/crypto/hash' },
   { name: '블록 암호', desc: 'AES · ARIA · SEED', path: '/crypto/block' },
@@ -17,6 +9,7 @@ const cryptoTools = [
   { name: '메시지 인증', desc: 'HMAC-SHA2 · HMAC-SHA3', path: '/crypto/mac' },
   { name: 'PQC', desc: 'ML-KEM · ML-DSA · SLH-DSA (FIPS 203/204/205)', path: '/crypto/pqc' },
   { name: 'KPQC', desc: 'NTRU+ · SMAUG-T · AIMer · HAETAE', path: '/crypto/kpqc' },
+  { name: 'PQ/T 하이브리드', desc: 'PQC + 전통 암호 하이브리드 결합 키 합의/서명', path: '/crypto/pq-hybrid' },
 ];
 
 export default function Home() {
@@ -39,12 +32,12 @@ export default function Home() {
           CS Lee
         </h1>
         <p style={{ fontSize: 14.5, color: 'oklch(var(--bc) / 0.48)', lineHeight: 1.75, maxWidth: 500 }}>
-          개인 도구 모음과 암호 알고리즘 플레이그라운드입니다.
+          암호 알고리즘 플레이그라운드입니다.
         </p>
       </div>
 
       {/* Crypto section */}
-      <section style={{ marginBottom: 32 }}>
+      <section style={{ marginBottom: 48 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10 }}>
           <div className="cs-label">암호 알고리즘</div>
           <Link
@@ -58,24 +51,6 @@ export default function Home() {
         </div>
         <div className="cs-tool-grid">
           {cryptoTools.map(item => (
-            <Link key={item.path} to={item.path} className="cs-tool-cell">
-              <div className="cs-tool-cell-name">{item.name}</div>
-              <div className="cs-tool-cell-desc">{item.desc}</div>
-            </Link>
-          ))}
-        </div>
-        <div style={{ marginTop: 7, fontSize: 11.5, color: 'oklch(var(--bc) / 0.32)' }}>
-
-        </div>
-      </section>
-
-      <div className="cs-divider" />
-
-      {/* Dev tools */}
-      <section style={{ marginBottom: 48 }}>
-        <div className="cs-label" style={{ marginBottom: 10 }}>개발자 도구</div>
-        <div className="cs-tool-grid">
-          {devTools.map(item => (
             <Link key={item.path} to={item.path} className="cs-tool-cell">
               <div className="cs-tool-cell-name">{item.name}</div>
               <div className="cs-tool-cell-desc">{item.desc}</div>
