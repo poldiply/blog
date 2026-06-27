@@ -18,6 +18,7 @@ const menus = [
   { name: '메시지 인증', path: '/crypto/mac' },
   { name: 'PQC', path: '/crypto/pqc' },
   { name: 'KPQC', path: '/crypto/kpqc' },
+  { name: 'PQ/T 하이브리드', path: '/crypto/pq-hybrid' },
 ];
 
 export default function Sidebar() {

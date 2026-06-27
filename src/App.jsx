@@ -21,6 +21,7 @@ import KDFPlayground       from './pages/crypto/KDFPlayground';
 import PQCPlayground       from './pages/crypto/PQCPlayground';
 import KPQCPlayground      from './pages/crypto/KPQCPlayground';
 import KeyAgreementPlayground from './pages/crypto/KeyAgreementPlayground';
+import PQHybridPlayground  from './pages/crypto/PQHybridPlayground';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
         <Route path="/crypto/pqc"          element={<PQCPlayground />} />
         <Route path="/crypto/kpqc"         element={<KPQCPlayground />} />
         <Route path="/crypto/agreement"    element={<KeyAgreementPlayground />} />
+        <Route path="/crypto/pq-hybrid"    element={<PQHybridPlayground />} />
 
         <Route path="*" element={<div className="text-center mt-20">🚧 공사 중입니다!</div>} />
       </Routes>
